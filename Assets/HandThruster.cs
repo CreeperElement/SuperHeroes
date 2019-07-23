@@ -25,7 +25,6 @@ public class HandThruster : MonoBehaviour
     {
         var squeeze = SteamVR_Input.GetSingleAction("Squeeze", false);
         var triggerModifier = squeeze.axis;
-        Debug.Log(triggerModifier);
         //thrustPower = Thrust;
         if(triggerModifier > 0)
         {
