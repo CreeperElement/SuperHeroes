@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(FighterInput))]
+[CustomEditor(typeof(InputCompatability))]
 public class PlayerSlector : Editor
 {
     List<string> _choices;
@@ -25,7 +25,7 @@ public class PlayerSlector : Editor
         // Draw the default inspector
         DrawDefaultInspector();
         _choiceIndex = EditorGUILayout.Popup(_choiceIndex, _choices.ToArray());
-        var someClass = target as FighterInput;
+        var someClass = target as InputCompatability;
         // Update the selected choice in the underlying object
         someClass.PlayerNumber = _choices[_choiceIndex];
         // Save the changes back to the object

@@ -7,18 +7,21 @@ using UnityEngine;
 
 namespace Assets.Scripts.PlayerInput
 {
-    class FighterInput : MonoBehaviour
+    class InputCompatability : MonoBehaviour
     {
         public String PlayerNumber;
         public enum InputMethod { Controller, Other }
         public InputMethod inputMethod;
-
-        private Rigidbody rbody;
-        private bool grounded = true, colliding = false;
         
+        private bool grounded = true, colliding = false;
+        private CharacterMoveController characterController;
+
+
         private void Start()
         {
-            rbody = GetComponent<Rigidbody>();
+            characterController = GetComponent<CharacterMoveController>();
+            if (characterController == null)
+                gameObject.AddComponent<CharacterMoveController>();
         }
 
         public void Update()
@@ -35,60 +38,26 @@ namespace Assets.Scripts.PlayerInput
 
         private void ProcessControllerInput()
         {
-            HandleInput();
-
-            if (Input.GetButtonDown($"{PlayerNumber}:A"))
-                doPrimaryAttack();
-            if (Input.GetButtonDown($"{PlayerNumber}:B"))
-                doSecondaryAttack();
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            colliding = true;
-            grounded = false;
-            foreach(ContactPoint contact in collision.contacts)
-                if(contact.normal.y > 0)
-                    grounded = true;
-        }
-
-        private void OnCollisionStay(Collision collision)
-        {
-            colliding = true;
-            grounded = false;
-            foreach (ContactPoint contact in collision.contacts)
-                if (contact.normal.y > 0)
-                    grounded = true;
-        }
-
-        private void OnCollisionExit(Collision collision)
-        {
-            colliding = false;
-        }
-
-        private void doPrimaryAttack()
-        {
-            float verticalDirection = Input.GetAxis($"{PlayerNumber}:Vertical");
-            if (grounded && verticalDirection > 0)
+            ProcessDirectionInputs();
+            if(characterController.Grounded)
             {
-                Debug.Log("Jump");
-                rbody.AddForce(new Vector3(0, verticalDirection * 10, 0), ForceMode.Impulse);
-                grounded = false;
+                // Do ground attacks
+                if(Input.GetButton($"{PlayerNumber}:A"))
+                {
+                    // Do aerials
+                    if()
+                }
+            } else
+            {
+                // Do Aerials
             }
-        }
-        private void doSecondaryAttack()
-        {
+            // Do Ground-Agnostic attacks
 
         }
 
-        private void HandleInput()
+        void ProcessDirectionInputs()
         {
-            float verticalDirection = Input.GetAxis($"{PlayerNumber}:Vertical");
-            float horizontalDirection = Input.GetAxis($"{PlayerNumber}:Horizontal");
-            Vector2 movementDirection = new Vector3(verticalDirection, horizontalDirection, 0);
-
-            if(!colliding || grounded)
-                rbody.AddForce(new Vector3(horizontalDirection, 0, 0), ForceMode.Impulse);
+            characterController.DirectionalInput = new Vector2(Input.GetAxis($"{PlayerNumber:Horizontal}"), Input.GetAxis($"{PlayerNumber}:Vertical"));
         }
 
     }
